@@ -1,3 +1,11 @@
+//Problem Summary: 2094. Finding 3-Digit Even Numbers
+/*You are given an array of digits (0–9), possibly with duplicates.
+Your task is to find all unique 3-digit even numbers that can be formed by using exactly 3 digits from the array (in any order), such that:
+No leading zero (e.g., 012 is invalid).
+Last digit must be even (i.e., 0, 2, 4, 6, 8).
+Each digit used only as many times as it appears in the array.
+Return: A sorted list of valid numbers (no duplicates).*/
+
 #include <vector>
 #include <unordered_map>
 #include <set>
