@@ -1,52 +1,53 @@
-//Problem Summary: 2094. Finding 3-Digit Even Numbers
-/*You are given an array of digits (0–9), possibly with duplicates.
-Your task is to find all unique 3-digit even numbers that can be formed by using exactly 3 digits from the array (in any order), such that:
-No leading zero (e.g., 012 is invalid).
-Last digit must be even (i.e., 0, 2, 4, 6, 8).
-Each digit used only as many times as it appears in the array.
-Return: A sorted list of valid numbers (no duplicates).*/
-
-#include <vector>
-#include <unordered_map>
-#include <set>
+//3335. Total Characters in String After Transformations I (med)
 #include <iostream>
+#include <vector>
+#include <string>
+
 using namespace std;
 
-class Solution {
-public:
-    vector<int> findEvenNumbers(vector<int>& digits) {
-        vector<int> count(10, 0);
-        for (int d : digits) count[d]++;  // Count frequency of each digit
+const int MOD = 1e9 + 7;
 
-        set<int> result;
+int totalLengthAfterTransformations(string s, int t) {
+    // dp[c][i] = length of transforming character 'a'+c for i steps
+    vector<vector<int>> dp(26, vector<int>(t + 1, 0));
 
-        // Generate all 3-digit numbers from 100 to 998 (step by 2 to ensure even numbers)
-        for (int num = 100; num <= 999; num += 2) {
-            int a = num / 100;
-            int b = (num / 10) % 10;
-            int c = num % 10;
+    // Base case: at t = 0, length is 1 for each character
+    for (int c = 0; c < 26; ++c) {
+        dp[c][0] = 1;
+    }
 
-            vector<int> tempCount = count;
-            if (--tempCount[a] >= 0 &&
-                --tempCount[b] >= 0 &&
-                --tempCount[c] >= 0) {
-                result.insert(num);
+    // Build DP table
+    for (int i = 1; i <= t; ++i) {
+        for (int c = 0; c < 26; ++c) {
+            if (c == 25) {
+                // 'z' becomes "ab"
+                dp[c][i] = (dp[0][i - 1] + dp[1][i - 1]) % MOD;
+            } else {
+                // other characters become next character
+                dp[c][i] = dp[c + 1][i - 1];
             }
         }
-
-        return vector<int>(result.begin(), result.end());
     }
-};
 
-// Example usage
+    // Calculate final result
+    long long result = 0;
+    for (char ch : s) {
+        int idx = ch - 'a';
+        result = (result + dp[idx][t]) % MOD;
+    }
+
+    return static_cast<int>(result);
+}
+
 int main() {
-    Solution solution;
-    vector<int> digits = {2, 1, 3, 0};
-    vector<int> evenNumbers = solution.findEvenNumbers(digits);
-    
-    // Output the result
-    for (int num : evenNumbers) {
-        cout << num << " ";
-    }
+    // Example usage:
+    string s1 = "abcyy";
+    int t1 = 2;
+    cout << totalLengthAfterTransformations(s1, t1) << endl;  // Output: 7
+
+    string s2 = "azbk";
+    int t2 = 1;
+    cout << totalLengthAfterTransformations(s2, t2) << endl;  // Output: 5
+
     return 0;
 }
